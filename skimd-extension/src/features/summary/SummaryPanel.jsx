@@ -5,6 +5,7 @@ import SummarySkeleton  from '../../shared/components/SummarySkeleton.jsx';
 import ExportControls   from '../export/ExportControls.jsx';
 import { useSummary }    from './useSummary.js';
 import { formatSummary } from './formatters.js';
+import { isAutoSummariseReady } from './autoSummarise.js';
 
 /* ─── Format icon definitions ────────────────────────────────────────────────
  * Each icon is a 16×16 viewBox SVG path so they scale crisply at any density.
@@ -125,7 +126,7 @@ function FormatIconButton({ formatKey, activeFormat, onSelect }) {
  *   triggerSummarise — when true, auto-fires handleSummarise (used by keyboard shortcut).
  *   onTriggerConsumed — called after the auto-fire so App resets the flag.
  */
-export default function SummaryPanel({ transcriptState, apiKey = '', triggerSummarise = false, onTriggerConsumed, onSummaryReady }) {
+export default function SummaryPanel({ transcriptState, apiKey = '', triggerSummarise = false, onTriggerConsumed, onSummaryReady, claimAutoSummarise }) {
   const [activeFormat, setActiveFormat] = useState('bullets');
 
   const {
@@ -161,8 +162,24 @@ export default function SummaryPanel({ transcriptState, apiKey = '', triggerSumm
 
   async function handleSummarise() {
     if (!transcript || loading) return;
-    summariseAll({ transcript });
+    await summariseAll({ transcript });
   }
+
+  useEffect(() => {
+    const ready = isAutoSummariseReady({
+      apiKey,
+      videoId,
+      transcript,
+      hasCaptions,
+      transcriptLoading,
+      transcriptError,
+      summaryLoading,
+      hydrated,
+      summaries,
+    });
+    if (!ready || !claimAutoSummarise?.(videoId)) return;
+    summariseAll({ transcript });
+  }, [apiKey, videoId, transcript, hasCaptions, transcriptLoading, transcriptError, summaryLoading, hydrated, summaries, claimAutoSummarise, summariseAll]);
 
   // ── Auto-summarise (keyboard shortcut) ──────────────────────────────
   useEffect(() => {

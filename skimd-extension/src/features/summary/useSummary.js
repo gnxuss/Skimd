@@ -62,6 +62,7 @@ export function useSummary(videoId, apiKey) {
   const videoIdRef = useRef(videoId);
   const apiKeyRef  = useRef(apiKey);
   const tabIdRef   = useRef(null);
+  const requestInFlightRef = useRef(false);
   useEffect(() => { videoIdRef.current = videoId; }, [videoId]);
   useEffect(() => { apiKeyRef.current  = apiKey;  }, [apiKey]);
 
@@ -77,6 +78,7 @@ export function useSummary(videoId, apiKey) {
 
     async function hydrate() {
       setLoading(true);
+      setHydrated(false);
       setError(null);
       setSummaries(NULL_SUMMARIES);
 
@@ -104,6 +106,9 @@ export function useSummary(videoId, apiKey) {
    * @param {{ transcript: string }} params
    */
   async function summariseAll({ transcript }) {
+    if (requestInFlightRef.current) return false;
+    requestInFlightRef.current = true;
+
     const vid   = videoIdRef.current;
     const key   = apiKeyRef.current;
     const tabId = tabIdRef.current;
@@ -117,9 +122,12 @@ export function useSummary(videoId, apiKey) {
 
       setSummaries(fresh);
       await saveSummaries(tabId, vid, fresh);
+      return true;
     } catch (err) {
       setError({ code: err.code ?? 'GROQ_UNAVAILABLE', message: err.message });
+      return false;
     } finally {
+      requestInFlightRef.current = false;
       setLoading(false);
     }
   }

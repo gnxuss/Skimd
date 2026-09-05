@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import SummaryPanel   from '../features/summary/SummaryPanel.jsx';
 import TranscriptView from '../features/transcript/TranscriptView.jsx';
@@ -8,6 +8,7 @@ import { useTranscript } from '../features/transcript/useTranscript.js';
 import { useTimeline }   from '../features/timeline/useTimeline.js';
 import { useApiKey }     from '../features/settings/useApiKey.js';
 import { useTheme }      from '../shared/hooks/useTheme.js';
+import { createAutoSummariseClaims } from '../features/summary/autoSummarise.js';
 
 // Tab definitions — order determines display order.
 const TABS = [
@@ -29,6 +30,11 @@ const TABS = [
 export default function App() {
   const [activeTab, setActiveTab] = useState('summary');
   const { theme, toggleTheme } = useTheme();
+  const autoSummariseClaims = useRef(createAutoSummariseClaims());
+  const claimAutoSummarise = useCallback(
+    (videoId) => autoSummariseClaims.current.claim(videoId),
+    [],
+  );
 
   // ── API key ─────────────────────────────────────────────────────────────────
   const {
@@ -234,6 +240,7 @@ export default function App() {
                 apiKey={apiKey}
                 triggerSummarise={pendingSummarise}
                 onTriggerConsumed={() => setPendingSummarise(false)}
+                claimAutoSummarise={claimAutoSummarise}
               />
             )}
             {activeTab === 'transcript' && (
