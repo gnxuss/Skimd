@@ -23,7 +23,7 @@ See: .planning/PROJECT.md (updated 2026-09-05)
 Phase: 1 of 5 (Trusted Extension Foundation)
 Plan: 0 of TBD in current phase
 Status: Ready to plan
-Last activity: 2026-09-05 - Completed quick task 260905-pv4: Diagnose and fix Groq summarisation failures for videos longer than about six minutes
+Last activity: 2026-09-05 - Completed quick task 260905-qph: Automatically start summarising the current YouTube video when the extension popup opens
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -73,6 +73,7 @@ None yet.
 | 260905-o14 | Diagnose and fix the Summarise action failing with Could not reach Groq while preserving specific and truthful error feedback | 2026-09-05 | e524a97 | [260905-o14-diagnose-and-fix-the-summarise-action-fa](./quick/260905-o14-diagnose-and-fix-the-summarise-action-fa/) |
 | 260905-ovv | Diagnose and fix intermittent Groq busy unavailable and timeout failures during summarisation | 2026-09-05 | 96584db | [260905-ovv-diagnose-and-fix-intermittent-groq-busy-](./quick/260905-ovv-diagnose-and-fix-intermittent-groq-busy-/) |
 | 260905-pv4 | Diagnose and fix Groq summarisation failures for videos longer than about six minutes | 2026-09-05 | 399a2bf | [260905-pv4-diagnose-and-fix-groq-summarisation-fail](./quick/260905-pv4-diagnose-and-fix-groq-summarisation-fail/) |
+| 260905-qph | Automatically start summarising the current YouTube video when the extension popup opens | 2026-09-05 | 2030a9d | [260905-qph-automatically-start-summarising-the-curr](./quick/260905-qph-automatically-start-summarising-the-curr/) |
 
 ## Deferred Items
 
@@ -83,5 +84,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-09-05
-Stopped at: Completed quick task 260905-pv4; Phase 1 remains ready for planning
+Stopped at: Completed quick task 260905-qph; Phase 1 remains ready for planning
 Resume file: None
