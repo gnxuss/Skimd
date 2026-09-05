@@ -1,0 +1,21 @@
+{
+  "source_path": "/Users/j/Documents/Projects/Skimd-V2/PRD.md",
+  "type": "PRD",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "Skimd",
+  "summary": "Product requirements for a client-side Chrome extension that summarizes YouTube videos and provides transcripts, chapters, navigation, and content export.",
+  "scope": [
+    "Chrome extension",
+    "YouTube videos",
+    "AI video summaries",
+    "video transcripts",
+    "timestamped chapters",
+    "content export",
+    "AI API key"
+  ],
+  "cross_refs": [],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

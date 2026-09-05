@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Skimd</title>
+    <!--
+      Flash-of-white prevention.
+      This inline block is parsed and applied synchronously — before the
+      external stylesheet, before React mounts, before any pixel is painted.
+      Values match the dark defaults in global.css exactly. The light-theme
+      detection script in main.jsx overrides #root when needed.
+    -->
+    <style>
+      html, body { margin: 0; padding: 0; background-color: #0f0f0f; }
+      #root      { background-color: #0f0f0f; }
+    </style>
+    <!--
+      Noto Sans — excellent Unicode coverage, clean hinting, open-source.
+      Weights loaded: 400 (normal body), 500 (medium labels), 600 (semibold headings).
+      font-display=swap prevents FOIT; fallback stack matches the @theme font-family below.
+    -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/popup/main.jsx"></script>
+  </body>
+</html>

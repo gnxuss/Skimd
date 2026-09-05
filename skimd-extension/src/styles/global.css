@@ -1,0 +1,188 @@
+@import "tailwindcss";
+
+/* class-based dark mode — toggled by adding `dark` to the root element */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ── Skimd brand design tokens ─────────────────────────────────────────────── */
+@theme {
+  /* Brand palette */
+  --color-brand-primary:       #FE5A02;
+  --color-brand-accent:        #FF8C42;
+  --color-brand-light-bg:      #FFFFFF;
+  --color-brand-light-surface: #F5F5F5;
+  --color-brand-light-text:    #1A1A1A;
+  --color-brand-dark-bg:       #0F0F0F;
+  --color-brand-dark-surface:  #1A1A1A;
+  --color-brand-dark-text:     #F0F0F0;
+
+  /* Typography */
+  --font-sans: 'Noto Sans', system-ui, -apple-system, sans-serif;
+
+  /* Motion tokens — apply via inline style or Tailwind arbitrary values */
+  --ease-spring:    cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-out-expo:  cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --duration-fast:  100ms;
+  --duration-base:  150ms;
+  --duration-slow:  250ms;
+}
+
+/* ── Popup shell ───────────────────────────────────────────────────────────── */
+/*
+ * A firm height is required for the three-zone sticky layout to work.
+ * Without it, flex-1 on <main> is unconstrained — the document grows to
+ * whatever height the content needs and .scroll-panel never clips.
+ *
+ * 560px is the popup height: Chrome extension popups can go up to ~600px
+ * before the popup frame clips them. We pick 560px to leave headroom.
+ * min-height is kept (via #root) so empty-state screens don't feel cramped.
+ */
+html, body {
+  height:           100%;
+  margin:           0;
+  padding:          0;
+  font-family:      'Noto Sans', system-ui, -apple-system, sans-serif;
+  font-size:        14px;
+  line-height:      1.6;
+  background-color: #0f0f0f; /* dark default — script corrects to #fff for light theme */
+  -webkit-font-smoothing:  antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  /*
+   * Fixed height = fixed popup viewport.
+   * The flex-col layout inside App fills this exactly:
+   *   header  (shrink-0)
+   *   tabbar  (shrink-0)
+   *   main    (flex-1, min-height: 0  → bounded)
+   *   footer  (shrink-0)
+   *
+   * background-color is set here as CSS fallback. The <div id="root">
+   * inline style and the bootstrap script both set it earlier, but this
+   * ensures correctness if those are ever stripped or overridden.
+   */
+  height:           560px;
+  width:            400px;
+  overflow:         hidden;      /* clip anything that escapes the shell */
+  display:          flex;
+  flex-direction:   column;
+  background-color: #0f0f0f;    /* dark default — Tailwind dark: utilities override */
+
+  font-family: 'Noto Sans', system-ui, -apple-system, sans-serif;
+  font-size:   14px;
+  line-height: 1.6;
+  -webkit-font-smoothing:  antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Custom scrollbars — always visible, on-brand ──────────────────────────── */
+.scroll-panel {
+  overflow-x: hidden; /* clips scaled children that bleed sideways */
+  overflow-y: auto;   /* vertical scroll as before */
+  flex: 1;
+  min-height: 0;
+}
+.scroll-panel::-webkit-scrollbar {
+  width: 5px;
+}
+.scroll-panel::-webkit-scrollbar-track {
+  background:    rgba(254, 90, 2, 0.08);
+  border-radius: 3px;
+}
+.scroll-panel::-webkit-scrollbar-thumb {
+  background:    rgba(254, 90, 2, 0.45);
+  border-radius: 3px;
+}
+.scroll-panel::-webkit-scrollbar-thumb:hover {
+  background: #FE5A02;
+}
+
+/* ── Micro-animations ────────────────────────────────────────────────────── */
+@keyframes fade-in {
+  from {
+    opacity:   0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity:   1;
+    transform: translateY(0);
+  }
+}
+
+/* Tab content: 150 ms */
+.anim-fade-in {
+  animation: fade-in 150ms ease-out both;
+}
+
+/* Summary output: 200 ms — richer content, slightly more breathing room */
+.anim-fade-in-200 {
+  animation: fade-in 200ms ease-out both;
+}
+
+/**
+ * click-flash — played once on timestamp row click.
+ * A ::before overlay fades from ~55% opacity to 0 over 150 ms.
+ * Only opacity is animated → compositor-only, no layout cost.
+ */
+@keyframes click-flash {
+  0%   { opacity: 0.55; }
+  100% { opacity: 0;    }
+}
+
+.row-flash {
+  position: relative;
+  overflow: hidden;
+}
+
+.row-flash::before {
+  content: '';
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background: var(--color-brand-primary);
+  border-radius: inherit;
+  opacity: 0;
+  animation: click-flash 150ms cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+}
+
+/* ── Respect reduced-motion preferences ─────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .anim-fade-in,
+  .anim-fade-in-200 {
+    animation: none;
+  }
+
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration:  0.01ms !important;
+  }
+}
+
+/* ── Skeleton shimmer ───────────────────────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position:  400px 0; }
+}
+
+.skeleton {
+  border-radius: 5px;
+  animation:     shimmer 1.4s ease-in-out infinite;
+  background-size: 800px 100%;
+  /* Light mode gradient */
+  background-image: linear-gradient(
+    90deg,
+    #f0f0f0 0px,
+    #e8e8e8 40%,
+    #f0f0f0 80%
+  );
+}
+
+:where(.dark) .skeleton {
+  background-image: linear-gradient(
+    90deg,
+    #27272a 0px,
+    #3f3f46 40%,
+    #27272a 80%
+  );
+}
