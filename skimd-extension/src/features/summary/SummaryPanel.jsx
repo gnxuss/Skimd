@@ -123,10 +123,8 @@ function FormatIconButton({ formatKey, activeFormat, onSelect }) {
  * Props:
  *   transcriptState  — shared state from useTranscript(), lifted in App.jsx.
  *                      Must include { videoId, transcript, hasCaptions, loading, error }.
- *   triggerSummarise — when true, auto-fires handleSummarise (used by keyboard shortcut).
- *   onTriggerConsumed — called after the auto-fire so App resets the flag.
  */
-export default function SummaryPanel({ transcriptState, apiKey = '', triggerSummarise = false, onTriggerConsumed, onSummaryReady, claimAutoSummarise }) {
+export default function SummaryPanel({ transcriptState, apiKey = '', onSummaryReady, claimAutoSummarise }) {
   const [activeFormat, setActiveFormat] = useState('bullets');
 
   const {
@@ -180,18 +178,6 @@ export default function SummaryPanel({ transcriptState, apiKey = '', triggerSumm
     if (!ready || !claimAutoSummarise?.(videoId)) return;
     summariseAll({ transcript });
   }, [apiKey, videoId, transcript, hasCaptions, transcriptLoading, transcriptError, summaryLoading, hydrated, summaries, claimAutoSummarise, summariseAll]);
-
-  // ── Auto-summarise (keyboard shortcut) ──────────────────────────────
-  useEffect(() => {
-    if (!triggerSummarise) return;
-    // Wait until data is ready — effect will re-fire automatically when
-    // transcriptLoading, transcript, or loading change (all in deps).
-    if (transcriptLoading || !transcript || loading) return;
-    // Commit to a decision and consume the trigger so the next press cycles cleanly.
-    onTriggerConsumed?.();
-    if (hasSummaries) return; // cached summary already shown — shortcut just opened the panel
-    handleSummarise();
-  }, [triggerSummarise, transcriptLoading, transcript, loading, hasSummaries]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Notify parent the first time a summary lands (for the tab dot indicator).
   useEffect(() => {

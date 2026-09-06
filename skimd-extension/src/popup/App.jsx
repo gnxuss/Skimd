@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 
 import SummaryPanel   from '../features/summary/SummaryPanel.jsx';
 import TranscriptView from '../features/transcript/TranscriptView.jsx';
@@ -59,30 +59,6 @@ export default function App() {
     error:    timelineError,
     seekTo,
   } = useTimeline(transcriptState.videoId);
-
-  // ── Auto-summarise via keyboard shortcut ─────────────────────────────────
-  const [pendingSummarise, setPendingSummarise] = useState(false);
-
-  useEffect(() => {
-    chrome.storage.session.get('autoSummarise').then((result) => {
-      if (result?.autoSummarise) {
-        chrome.storage.session.remove('autoSummarise').catch(() => {});
-        setPendingSummarise(true);
-        setActiveTab('summary');
-      }
-    }).catch(() => {});
-
-    function onStorageChanged(changes, area) {
-      if (area !== 'session') return;
-      if (!changes.autoSummarise?.newValue) return;
-      chrome.storage.session.remove('autoSummarise').catch(() => {});
-      setPendingSummarise(true);
-      setActiveTab('summary');
-    }
-
-    chrome.storage.onChanged.addListener(onStorageChanged);
-    return () => chrome.storage.onChanged.removeListener(onStorageChanged);
-  }, []);
 
   const showNotYouTube = transcriptState.notYouTube;
 
@@ -238,8 +214,6 @@ export default function App() {
               <SummaryPanel
                 transcriptState={transcriptState}
                 apiKey={apiKey}
-                triggerSummarise={pendingSummarise}
-                onTriggerConsumed={() => setPendingSummarise(false)}
                 claimAutoSummarise={claimAutoSummarise}
               />
             )}

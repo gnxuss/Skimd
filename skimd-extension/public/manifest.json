@@ -33,12 +33,12 @@
     "128": "icons/icon128.png"
   },
   "commands": {
-    "summarise": {
+    "_execute_action": {
       "suggested_key": {
-        "default": "Ctrl+Shift+X",
-        "mac": "Command+Shift+X"
+        "default": "Ctrl+Shift+Period",
+        "mac": "Command+Shift+Period"
       },
-      "description": "Open Skimd and summarise"
+      "description": "Open Skimd"
     }
   }
 }

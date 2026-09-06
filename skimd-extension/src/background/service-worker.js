@@ -1,14 +1,3 @@
-// ── Keyboard shortcut: "summarise" ───────────────────────────────────────────
-chrome.commands.onCommand.addListener(async (command) => {
-  if (command !== 'summarise') return;
-  await chrome.storage.session.set({ autoSummarise: true });
-  try {
-    await chrome.action.openPopup();
-  } catch {
-    // openPopup() throws on Arc, Brave, Edge, Chrome <116, or if already opening.
-  }
-});
-
 // ── Keepalive ─────────────────────────────────────────────────────────────────
 chrome.alarms.get('keepAlive', (existing) => {
   if (!existing) chrome.alarms.create('keepAlive', { periodInMinutes: 0.4 });
